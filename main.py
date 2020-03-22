@@ -7,6 +7,7 @@ import itertools
 import shutil
 import argparse
 import sys
+import astar
 
 parser = argparse.ArgumentParser(description='Demonstrate a shortest path algorithm on a randomly generated map.')
 parser.add_argument('--seed', type=int, help='pseudo-random number generator seed')
@@ -53,23 +54,9 @@ def red(s):
 m.special[f] = red('F')
 m.special[t] = red('T')
 
-path = []
-
-def sgn(x):
-	if x > 0:
-		return 1
-	elif x < 0:
-		return -1
-	else:
-		return 0
+path = astar.astar(f, t, m)
 
 arrow_map = dict(zip(itertools.product([-1,0,1],[-1,0,1]), "↖←↙↑X↓↗→↘"))
-
-i = f
-while i != t:
-	d = (sgn(t[0] - i[0]), sgn(t[1] - i[1]))
-	i = (i[0] + d[0], i[1] + d[1])
-	path.append(i)
 
 prev = None
 for i in path:
@@ -78,4 +65,5 @@ for i in path:
 	prev = i
 
 print(m, end='')
+
 print("{argv0} --seed={seed} --rows={rows} --cols={cols}".format(argv0=sys.argv[0], seed=seed, rows=rows, cols=cols))
