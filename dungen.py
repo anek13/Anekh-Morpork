@@ -1,5 +1,5 @@
 # Copyright (c) 2017, K. Alex Mills. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
@@ -41,7 +41,7 @@ class Map:
       for y in range(self.height):
          for x in range(self.width):
             if (x,y) in self.special:
-                line += '\033[41;37;1m' + self.special[(x,y)] + '\033[0m'
+                line += self.special[(x,y)]
             elif (self.squares[x + y * self.width] > 0):
                 line += '.'
             else:
@@ -56,11 +56,11 @@ class Map:
    # Unsets a map cell to the FILLED WITH A WALL.
    def unset(self, x, y):
       self.squares[x + y * self.width] = 0;
-   
+
    # Returns 1 if the cell is empty, 0 if it contains a wall.
    def get(self, x, y):
       return self.squares[x + y * self.width];
-   
+
    # Modifies this map by performing a logical or of that map with this one.
    def orWith(self, other):
       for x in range(min(other.width, self.width)):
@@ -106,7 +106,7 @@ def CarveBezier(amap, A, B, C, thin=False):
 
 # This is a prototype for the Goblin Warrens.
 # TODO: Implement a much better way of keeping the rooms apart and the tunnels
-#       from overlapping. 
+#       from overlapping.
 def GoblinHalls(amap):
    # Lists of nests stored as (center, radius) where isinstance(center,Point)
    nests = []
@@ -115,7 +115,7 @@ def GoblinHalls(amap):
       num_its += 1
       rad = r.randint(6, 10)  # radius
       new_nest = (Point(r.randint(rad, amap.width - rad), r.randint(rad, amap.height - rad)), rad)
-   
+
       if CircleClose(new_nest, nests, 10):
          continue
       nests.append(new_nest)
@@ -129,7 +129,7 @@ def GoblinHalls(amap):
       curr_nest = nests[i]
       min_nest = (i + 1) % len(nests)
       min_dist = curr_nest[0].L2(nests[min_nest][0])
-      
+
       for j in range(len(nests)):
          if i == j or (i,j) in connected_nests or (j,i) in connected_nests: continue
          dj = curr_nest[0].L2(nests[j][0])
@@ -170,7 +170,7 @@ def CarveTunnelBetweenNests(amap, nest1, nest2):
    C = nest2[0]
    if r.randint(0,1) == 1:
       B = Point(min(nest1[0].x, nest2[0].x) - r.randint(1, 5), max(nest1[0].y, nest2[0].y) + r.randint(1, 5))
-   else: 
+   else:
       B = Point(max(nest1[0].x, nest2[0].x) + r.randint(1,5), min(nest1[0].y, nest2[0].y) - r.randint(1,5))
    CarveBezier(amap, A, B, C)
 
@@ -186,8 +186,8 @@ def CarveCavernBezier(amap, A, B, C, base_prob, num_iters):
 
 # Randonly eats away at the walls of a map with acid. Any cell which has a
 # empty square adjacent to it is randomly set to be empty with a probability
-# equal to num_empty_squares * base_prob. The acid is allowed to run for 
-# num_iters. 
+# equal to num_empty_squares * base_prob. The acid is allowed to run for
+# num_iters.
 #
 # As written, this algorithm should touch each cell no more than four times,
 # regardless of the number of iterations the acid is allowed to "eat" at the
@@ -195,13 +195,13 @@ def CarveCavernBezier(amap, A, B, C, base_prob, num_iters):
 def WallAcid(amap, base_prob, num_iters):
    # Createa a list of boundary cells: cells which have free space adjacent
    # to them.
-   boundary = set() 
+   boundary = set()
    for x in [i + 1 for i in range(amap.width - 2)]:
       for y in [i + 1 for i in range (amap.height - 2)]:
          if amap.get(x, y) == 0 :
             is_boundary = False
             for (i, j) in [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]:
-               if (x + i >= 0 and x + i < amap.width and   
+               if (x + i >= 0 and x + i < amap.width and
                    y + j >= 0 and y + j < amap.height):
                   if amap.get(x + i, y + j) == 1:
                      is_boundary = True
@@ -214,8 +214,8 @@ def WallAcid(amap, base_prob, num_iters):
       for (x, y) in boundary:
          adjacent_walls = []
          for (i, j) in [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]:
-            if (x + i >= 0 and x + i < amap.width and   
-               y + j >= 0 and y + j < amap.height and 
+            if (x + i >= 0 and x + i < amap.width and
+               y + j >= 0 and y + j < amap.height and
                amap.get(x + i, y + j) == 0):
                adjacent_walls.append((x+i, y+j))
          prob_survive = base_prob * len(adjacent_walls)
@@ -224,7 +224,7 @@ def WallAcid(amap, base_prob, num_iters):
             next_boundary = next_boundary.union(adjacent_walls)
       boundary = next_boundary
 
-# Removes cells which are only diagonally adjacent to walls or free-standing. 
+# Removes cells which are only diagonally adjacent to walls or free-standing.
 # min_diags is the minimum number of adajcent diagonals allowed. Any wall cell
 # only adjacent to diagonal walls which is adjacent to fewer than min_diags
 # walls is removed.
@@ -236,7 +236,7 @@ def SmoothDiagonals(amap, min_diags = 2):
 def FillCubbyHoles(amap, min_diags = 2):
    SmoothHelper(amap, min_diags, toggle=1)
 
-# Helper for smoothing functions. Both of the smoothing functions use the 
+# Helper for smoothing functions. Both of the smoothing functions use the
 # same basic algorithm, but the meaning of zero and one are reversed.
 def SmoothHelper(amap, min_diags, toggle):
    for (x, y) in [(x+1, y+1) for x in range(amap.width - 2) for y in range(amap.height - 2)]:
@@ -245,12 +245,12 @@ def SmoothHelper(amap, min_diags, toggle):
          for (i, j) in [(-1, 0), (1,0), (0, 1), (0,-1)]:
            if amap.get(x + i, y + j) == toggle:  num_cardinal = num_cardinal + 1
          if num_cardinal > 0: continue
-         
+
          num_diagonal = 0
          for (i, j) in [(-1,-1), (1,1), (-1,1), (1,-1)]:
            if amap.get(x + i, y + j) == toggle:  num_diagonal = num_diagonal + 1
          if num_diagonal < min_diags:
-           if toggle == 1:   amap.unset(x,y) 
+           if toggle == 1:   amap.unset(x,y)
            elif toggle == 0: amap.set(x,y)
 
 # Simple and elegant pythonic Point.
@@ -259,11 +259,11 @@ class Point:
       if y is None:
          if isinstance(x, Point):
             self.x, self.y = x.x, x.y
-         else: 
+         else:
             self.x, self.y = x, x
       else:
          self.x, self.y = x, y
- 
+
    def __add__(self, other):
       other = Point(other)
       return Point(self.x + other.x, self.y + other.y)
@@ -272,22 +272,21 @@ class Point:
    def __sub__(self, other):
       other = Point(other)
       return Point(self.x - other.x, self.y - other.y)
-   
+
    def __mul__(self, other):
       other = Point(other)
       return Point(self.x * other.x, self.y * other.y)
    __rmul__ = __mul__   # commutative
-   
+
    def __div__(self, other):
       other = Point(other)
       return Point(self.x / other.x, self.y / other.y)
 
    def L1(self, other):
       return math.abs(self.x - other.x) + math.abs(self.y - other.y)
- 
+
    def L2(self, other):
       return math.sqrt((self.x - other.x)**2 + (self.y - other.y)**2)
 
    def __repr__(self):
       return 'Point({self.x}, {self.y})'.format(self=self)
-   
