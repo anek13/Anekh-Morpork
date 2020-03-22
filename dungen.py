@@ -33,16 +33,19 @@ class Map:
       self.width = width
       self.height = height
       self.squares = [0] * width * height
+      self.special = {}
 
    # Displays the map for your viewing pleasure.
    def __str__(self):
       line = ""
       for y in range(self.height):
          for x in range(self.width):
-            if (self.squares[x + y * self.width] > 0):
-               line += '.'
+            if (x,y) in self.special:
+                line += '\033[41;37;1m' + self.special[(x,y)] + '\033[0m'
+            elif (self.squares[x + y * self.width] > 0):
+                line += '.'
             else:
-               line += '#'
+                line += '#'
          line += '\n'
       return line
 
