@@ -1,5 +1,9 @@
 BSD 3-Clause License
 
+Copyright (c) 2020, Anna Wróbel
+
+This project incorporates "dungen: Random Dungeon Generation in Python" library:
+https://github.com/kalexmills/dungen
 Copyright (c) 2017, K. Alex Mills
 All rights reserved.
 
