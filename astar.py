@@ -2,19 +2,6 @@ import heapq as hq
 import numpy as np
 import math
 
-
-# Example to show Astar vs Djikstra
-#./main.py --seed=765405613974766590 --rows=70 --cols=126
-#./main.py --seed=5567829920885454293 --rows=70 --cols=126
-#./main.py --seed=8155145506933360908 --rows=70 --cols=126
-#./main.py --seed=1179501252300509317 --rows=70 --cols=126
-# ./main.py --seed=1579104288976817635 --rows=70 --cols=126
-
-# Example with not visited fields in the middle
-#./main.py --seed=4967123985053277433 --rows=70 --cols=126
-
-
-
 def dist(a,b):
     return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
 
@@ -40,6 +27,7 @@ def reconstructPath(cameFrom, current):
 def astar(start, goal, m):
 
     openSet = []
+    visited = set()
     cameFrom = {}
 
     gScore = np.full((m.width, m.height), np.inf)
@@ -69,7 +57,9 @@ def astar(start, goal, m):
                 fScore[neighbour] = gScore[neighbour]  + dist(neighbour, goal)
                 if neighbour not in m.special:
                     m.special[neighbour] = '_'
-                hq.heappush(openSet, (fScore[neighbour], neighbour))
+                if neighbour not in visited:
+                    visited.add(neighbour)
+                    hq.heappush(openSet, (fScore[neighbour], neighbour))
 
     # in case point is unreachable
     return None
