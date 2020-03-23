@@ -13,7 +13,15 @@ parser = argparse.ArgumentParser(description='Demonstrate a shortest path algori
 parser.add_argument('--seed', type=int, help='pseudo-random number generator seed')
 parser.add_argument('--rows', type=int, help='number of rows')
 parser.add_argument('--cols', type=int, help='number of columns')
+parser.add_argument('--mode', type=str, help='astar or Dijkstra')
+
 args = parser.parse_args()
+
+print(args.mode)
+if args.mode:
+	mode = args.mode
+else:
+	mode = 'astar'
 
 if args.seed:
 	seed = args.seed
@@ -54,7 +62,7 @@ def red(s):
 m.special[f] = red('F')
 m.special[t] = red('T')
 
-path = astar.astar(f, t, m)
+path = astar.astar(f, t, m, mode)
 
 arrow_map = dict(zip(itertools.product([-1,0,1],[-1,0,1]), "↖←↙↑X↓↗→↘"))
 
@@ -66,4 +74,4 @@ for i in path:
 
 print(m, end='')
 
-print("{argv0} --seed={seed} --rows={rows} --cols={cols}".format(argv0=sys.argv[0], seed=seed, rows=rows, cols=cols))
+print("{argv0} --seed={seed} --rows={rows} --cols={cols} --mode={mode}".format(argv0=sys.argv[0], seed=seed, rows=rows, cols=cols, mode=mode))

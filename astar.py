@@ -24,7 +24,7 @@ def reconstructPath(cameFrom, current):
         total_path.insert(0, current)
     return total_path
 
-def astar(start, goal, m):
+def astar(start, goal, m, mode):
 
     openSet = []
     visited = set()
@@ -38,7 +38,7 @@ def astar(start, goal, m):
 
     while len(openSet) > 0:
         _, current = hq.heappop(openSet)
-        print(m)
+        # print(m)
 
         if current == goal:
             print('Finished!')
@@ -54,7 +54,12 @@ def astar(start, goal, m):
 
                 gScore[neighbour] = tentative_gScore
                 # print(gScore[neighbour])
-                fScore[neighbour] = gScore[neighbour]  + dist(neighbour, goal)
+
+                if mode == 'astar':
+                    fScore[neighbour] = gScore[neighbour]  + dist(neighbour, goal)
+                elif mode =='dijkstra':
+                    fScore[neighbour] = gScore[neighbour]
+
                 if neighbour not in m.special:
                     m.special[neighbour] = '_'
                 if neighbour not in visited:
